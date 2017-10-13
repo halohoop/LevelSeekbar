@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class LevelSeekbar extends View {
 
     private LevelChangedListener mLevelChangedListener = null;
     private List<LevelDot> mLevelDots;
-    private int mCurrentLevelValue;
+    private int mCurrentLevelDotIndex;
     private int mMeasuredHeight;
     private int mMeasuredWidth;
 
@@ -151,11 +152,20 @@ public class LevelSeekbar extends View {
 
         final LevelDot firstLevelDot = levelDots.get(0);
         final LevelDot lastLevelDot = levelDots.get(levelDots.size() - 1);
+
+        mPaint.setColor(mRulerColor);
         //画直线
         canvas.drawLine(firstLevelDot.x, firstLevelDot.y, lastLevelDot.x, lastLevelDot.y, mPaint);
         //直接画，画圆点
         canvas.drawPath(mRulerPath, mPaint);
 
+        //画把手
+        mPaint.setColor(mHandlerColor);
+        mPaint.setStyle(Paint.Style.STROKE);
+        final LevelDot levelDot = levelDots.get(mCurrentLevelDotIndex);
+
+        canvas.drawCircle(levelDot.x,levelDot.y,mHandlerRadius, mPaint);
+        mPaint.setStyle(Paint.Style.FILL);
         //debug
         /*for (int i = 0; i < mLevelDots.size(); i++) {
             LevelDot levelDot = mLevelDots.get(i);
@@ -167,8 +177,8 @@ public class LevelSeekbar extends View {
         this.mLevelChangedListener = levelChangedListener;
     }
 
-    public int getCurrentLevelValue() {
-        return mCurrentLevelValue;
+    public int getCurrentLevelDotIndex() {
+        return mCurrentLevelDotIndex;
     }
 
     private class LevelDot {
@@ -178,6 +188,41 @@ public class LevelSeekbar extends View {
         float x = -1;
         float y = -1;
     }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        final float x = event.getX();
+        final float y = event.getY();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                whichDotReach(x, y, mLevelDots);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                whichDotReach(x, y, mLevelDots);
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                break;
+        }
+        return true;
+    }
+
+    private void whichDotReach(float x, float y, List<LevelDot> levelDots) {
+        final List<LevelDot> dots = levelDots;
+        int halfPaddingBetweenDescAndRuler = mPaddingBetweenDescAndRuler >> 1;
+        for (int i = 0; i < dots.size(); i++) {
+            LevelDot levelDot = dots.get(i);
+            float deltaX = levelDot.x - x;
+            if (Math.abs(deltaX) <= halfPaddingBetweenDescAndRuler) {
+                mCurrentLevelDotIndex = i;
+                invalidate();
+                break;
+            }
+        }
+    }
+
+
 
     public interface LevelChangedListener {
         void onLevelChanged(int levelIndex, int levelVal, String levelDesc);

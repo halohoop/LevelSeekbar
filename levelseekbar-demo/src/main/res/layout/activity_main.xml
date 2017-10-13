@@ -8,7 +8,10 @@
     tools:context="com.halohoop.levelseekbar_demo.MainActivity">
 
     <com.halohoop.levelseekbar.LevelSeekbar
-        app:dot_count="10"
+        app:dot_count="5"
+        app:padding_horizontal_from_edge="50dp"
+        app:handler_color="@color/colorAccent"
+        app:handler_radius="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
