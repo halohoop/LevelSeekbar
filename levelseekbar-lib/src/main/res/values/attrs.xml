@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LevelSeekbar">
+        <attr name="padding_horizontal_from_edge" format="dimension" />
+        <attr name="handler_radius" format="dimension" />
+        <attr name="ruler_radius" format="dimension" />
+        <attr name="padding_between_desc_and_ruler" format="dimension" />
+        <attr name="handler_color" format="color" />
+        <attr name="ruler_color" format="color" />
+        <attr name="dot_count" format="integer" />
+    </declare-styleable>
+</resources>
