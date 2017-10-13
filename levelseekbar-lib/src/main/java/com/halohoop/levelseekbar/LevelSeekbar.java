@@ -164,7 +164,7 @@ public class LevelSeekbar extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         final LevelDot levelDot = levelDots.get(mCurrentLevelDotIndex);
 
-        canvas.drawCircle(levelDot.x,levelDot.y,mHandlerRadius, mPaint);
+        canvas.drawCircle(levelDot.x, levelDot.y, mHandlerRadius, mPaint);
         mPaint.setStyle(Paint.Style.FILL);
         //debug
         /*for (int i = 0; i < mLevelDots.size(); i++) {
@@ -203,16 +203,22 @@ public class LevelSeekbar extends View {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                if (mLevelChangedListener != null) {
+                    final LevelDot levelDot = mLevelDots.get(mCurrentLevelDotIndex);
+                    if (levelDot!=null) {
+                        mLevelChangedListener.onLevelChanged(mCurrentLevelDotIndex, levelDot
+                                .levelVal, levelDot.levelDesc);
+                    }
+                }
                 break;
         }
         return true;
     }
 
-    private void whichDotReach(float x, float y, List<LevelDot> levelDots) {
-        final List<LevelDot> dots = levelDots;
+    private void whichDotReach(float x, float y, final List<LevelDot> levelDots) {
         int halfPaddingBetweenDescAndRuler = mPaddingBetweenDescAndRuler >> 1;
-        for (int i = 0; i < dots.size(); i++) {
-            LevelDot levelDot = dots.get(i);
+        for (int i = 0; i < levelDots.size(); i++) {
+            LevelDot levelDot = levelDots.get(i);
             float deltaX = levelDot.x - x;
             if (Math.abs(deltaX) <= halfPaddingBetweenDescAndRuler) {
                 mCurrentLevelDotIndex = i;
@@ -221,7 +227,6 @@ public class LevelSeekbar extends View {
             }
         }
     }
-
 
 
     public interface LevelChangedListener {

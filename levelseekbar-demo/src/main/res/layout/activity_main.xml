@@ -9,6 +9,8 @@
 
     <com.halohoop.levelseekbar.LevelSeekbar
         app:dot_count="5"
+        android:id="@+id/level_seek_bar"
+        app:padding_between_desc_and_ruler="10dp"
         app:padding_horizontal_from_edge="50dp"
         app:handler_color="@color/colorAccent"
         app:handler_radius="10dp"
