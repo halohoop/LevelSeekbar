@@ -23,6 +23,7 @@ public class LevelSeekbar extends View {
     private LevelChangedListener mLevelChangedListener = null;
     private List<LevelDot> mLevelDots;
     private int mCurrentLevelDotIndex;
+    private int mLastCurrentLevelDotIndex;
     private int mMeasuredHeight;
     private int mMeasuredWidth;
 
@@ -203,11 +204,12 @@ public class LevelSeekbar extends View {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (mLevelChangedListener != null) {
+                if (mLevelChangedListener != null && mLastCurrentLevelDotIndex != mCurrentLevelDotIndex) {
                     final LevelDot levelDot = mLevelDots.get(mCurrentLevelDotIndex);
                     if (levelDot!=null) {
                         mLevelChangedListener.onLevelChanged(mCurrentLevelDotIndex, levelDot
                                 .levelVal, levelDot.levelDesc);
+                        mLastCurrentLevelDotIndex = mCurrentLevelDotIndex;
                     }
                 }
                 break;
