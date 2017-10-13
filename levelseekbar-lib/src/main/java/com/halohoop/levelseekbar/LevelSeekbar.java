@@ -75,6 +75,7 @@ public class LevelSeekbar extends View {
         mLevelDots = new ArrayList<>(mDotCount);
 
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setStrokeWidth(10);
         mRulerPath = new Path();
     }
 
@@ -112,22 +113,22 @@ public class LevelSeekbar extends View {
          * 中间剩下的可用空间
          */
         final int distanceLeft = measuredWidth - (mPaddingHorizontalFromEdge * 2);
-        final float paddingBetween2DotsOnRuler = distanceLeft / ((float)(size - 1));
+        final float paddingBetween2DotsOnRuler = distanceLeft / ((float) (size - 1));
         final float halfPaddingBetween2DotsOnRuler = paddingBetween2DotsOnRuler / 2;
 
         final float startRulerX = mPaddingHorizontalFromEdge;
         final float startRulerY = halfMeasuredHeight - halfPaddingBetween2DotsOnRuler;
-        mRulerPath.moveTo(startRulerX, startRulerY);
-        mRulerPath.rLineTo(distanceLeft, 0);
-
         mRulerPath.rewind();
+        mRulerPath.moveTo(startRulerX, startRulerY);
+//        mRulerPath.rLineTo(distanceLeft, 0);
+
         mLevelDots.clear();
         for (int i = 0; i < size; i++) {
             LevelDot levelDot = new LevelDot();
             levelDot.levelDesc = "" + i;
             levelDot.levelVal = i;
             if (i == 0) {
-                levelDot.x = startRulerY;
+                levelDot.x = startRulerX;
                 levelDot.y = startRulerY;
             } else {
                 LevelDot prelevelDot = levelDots.get(i - 1);
@@ -135,6 +136,7 @@ public class LevelSeekbar extends View {
                 levelDot.y = prelevelDot.y;
             }
             mRulerPath.addCircle(levelDot.x, levelDot.y, mRulerRadius, Path.Direction.CW);
+            mRulerPath.rLineTo(paddingBetween2DotsOnRuler, 0);
             mLevelDots.add(levelDot);
         }
     }
@@ -147,8 +149,18 @@ public class LevelSeekbar extends View {
         }
 //        final int count = levelDots.size();
 
-        //直接画
+        final LevelDot firstLevelDot = levelDots.get(0);
+        final LevelDot lastLevelDot = levelDots.get(levelDots.size() - 1);
+        //画直线
+        canvas.drawLine(firstLevelDot.x, firstLevelDot.y, lastLevelDot.x, lastLevelDot.y, mPaint);
+        //直接画，画圆点
         canvas.drawPath(mRulerPath, mPaint);
+
+        //debug
+        /*for (int i = 0; i < mLevelDots.size(); i++) {
+            LevelDot levelDot = mLevelDots.get(i);
+            canvas.drawCircle(levelDot.x, 20, 10, mPaint);
+        }*/
     }
 
     public void setLevelChangeListener(LevelChangedListener levelChangedListener) {
